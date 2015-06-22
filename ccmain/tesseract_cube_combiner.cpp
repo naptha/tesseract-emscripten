@@ -19,7 +19,7 @@
 
 // The TesseractCubeCombiner class provides the functionality of combining
 // the recognition results of Tesseract and Cube at the word level
-
+#ifndef ANDROID_BUILD
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -304,3 +304,4 @@ float TesseractCubeCombiner::CombineResults(WERD_RES *tess_res,
   return net_out[1];
 }
 }
+#endif

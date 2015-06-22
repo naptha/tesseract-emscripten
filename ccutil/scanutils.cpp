@@ -34,9 +34,9 @@
 #include "tprintf.h"
 
 // workaround for "'off_t' was not declared in this scope" with -std=c++11
-#if !defined(off_t) && !defined(__APPLE__) && !defined(__CYGWIN__)
-typedef long off_t;
-#endif  // off_t
+// #if !defined(off_t) && !defined(__APPLE__) && !defined(__CYGWIN__)
+// typedef long off_t;
+// #endif  // off_t
 
 enum Flags {
   FL_SPLAT  = 0x01,   // Drop the value, do not assign

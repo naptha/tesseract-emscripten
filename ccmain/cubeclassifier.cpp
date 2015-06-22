@@ -18,6 +18,7 @@
 // limitations under the License.
 //
 ///////////////////////////////////////////////////////////////////////
+#ifndef ANDROID_BUILD
 
 #include "cubeclassifier.h"
 
@@ -130,5 +131,5 @@ const ShapeTable* CubeTessClassifier::GetShapeTable() const {
 
 }  // namespace tesseract
 
-
+#endif
 

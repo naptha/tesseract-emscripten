@@ -21,6 +21,7 @@
 // (or a thread) would create one CubeRecoContext object per language.
 // The CubeRecoContext object also provides methods to get and set the
 // different attribues of the Cube OCR Engine.
+#ifndef ANDROID_BUILD
 
 #ifndef CUBE_RECO_CONTEXT_H
 #define CUBE_RECO_CONTEXT_H
@@ -155,3 +156,4 @@ class CubeRecoContext {
 }
 
 #endif  // CUBE_RECO_CONTEXT_H
+#endif

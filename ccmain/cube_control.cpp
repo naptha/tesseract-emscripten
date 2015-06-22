@@ -6,7 +6,7 @@
  * Created:     September 2009
  *
  **********************************************************************/
-
+#ifndef ANDROID_BUILD
 // Include automatically generated configuration file if running autoconf.
 #ifdef HAVE_CONFIG_H
 #include "config_auto.h"
@@ -430,3 +430,5 @@ void Tesseract::fill_werd_res(const BoxWord& cube_box_word,
 }
 
 }  // namespace tesseract
+
+#endif

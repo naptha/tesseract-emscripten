@@ -16,7 +16,7 @@
  ** limitations under the License.
  *
  **********************************************************************/
-
+#ifndef ANDROID_BUILD
 #include <string>
 #include <limits.h>
 
@@ -200,3 +200,5 @@ CubeRecoContext * CubeRecoContext::Create(Tesseract *tess_obj,
   return cntxt;
 }
 }  // tesseract}
+
+#endif
