@@ -1,9 +1,10 @@
-<script src="frank.js"></script>
+<script src="madeline.js"></script>
 <canvas id="c"></canvas>
 <script>
 var Module = Tesseract304({
-	memoryInitializerRequest: {
-		response: [0]
+	TOTAL_MEMORY: 64e6,
+	TesseractProgress: function(percent){
+		console.log(percent)
 	}
 });
 
@@ -59,6 +60,7 @@ function runOCR(){
 	console.log('allocated image')
 	base = new Module.TessBaseAPI()
 	base.Init(null, 'eng')
+	console.log('loaded language')
 	// base.SetVariable("tessedit_char_blacklist", "xyz");
 	// base.SetVariable("tessedit_char_whitelist", "1234567890");
 	// it looks like numeric mode still includes non-alphabetic characters
@@ -78,23 +80,14 @@ function runOCR(){
 }
 
 
-function DetectOrientationScript(){
-	var results = new Module.OSResults();
-	var success = base.DetectOS(results);
-	console.log('detected os', success);
-	var charset = results.get_unicharset()
-	results.print_scores()
-}
 
 
 function DisplayWords(){
-
 	var new_canvas = document.createElement('canvas')
 	new_canvas.width = canvas.width
 	new_canvas.height = canvas.height
 	document.body.appendChild(new_canvas)
 	var new_ctx = new_canvas.getContext('2d')
-
 
 	var ri = base.GetIterator();
 	do {
@@ -157,15 +150,11 @@ function DisplayWords(){
 }
 
 
-
-
 function getBoundingBox(ri, level){
 	var pt = new Module.pointerHelper();
 	ri.BoundingBox(level, pt.i32('x0'), pt.i32('y0'), pt.i32('x1'), pt.i32('y1'));
 	return pt.get();
 }
-
-
 
 
 // TODO; figure out how to fit enums into the new PointerHelper API
@@ -192,25 +181,6 @@ function enumToString(value, prefix){
 		.filter(function(e){ return e.startsWith(prefix + '_') })
 		.filter(function(e){ return Module[e] === value })
 		.map(function(e){ return e.slice(prefix.length + 1) })[0])
-}
-
-function getBaseline__old(){
-	var pi = base.AnalyseLayout();
-	var ptr = Module._malloc(4*4);
-	var has_baseline = !!pi.Baseline(Module.RIL_BLOCK, 
-		Module.wrapPointer(ptr, Module.IntPtr),
-		Module.wrapPointer(ptr + 4, Module.IntPtr),
-		Module.wrapPointer(ptr + 4 * 2, Module.IntPtr),
-		Module.wrapPointer(ptr + 4 * 3, Module.IntPtr))
-  	var obj = {
-  		has_baseline: has_baseline,
-  		x0: Module.getValue(ptr, 'i32'),
-		y0: Module.getValue(ptr + 4, 'i32'),
-		x1: Module.getValue(ptr + 4 * 2, 'i32'),
-		y1: Module.getValue(ptr + 4 * 3, 'i32')
-	};
-	Module._free(ptr)
-	return obj;
 }
 
 // page iterators are subclassed by result iterators
@@ -250,60 +220,6 @@ function getFontInfo(ri){ // ri is result iterator
 	return obj;
 }
 
-function getFontInfo__oldish(ri){
-	var ptr = Module._malloc(4*8);
-	var fontName = ri.WordFontAttributes(
-		Module.wrapPointer(ptr,         Module.BoolPtr),
-		Module.wrapPointer(ptr + 4,     Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 2, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 3, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 4, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 5, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 6, Module.IntPtr),
-		Module.wrapPointer(ptr + 4 * 7, Module.IntPtr))
-
-  	var obj = {
-  		fontName: fontName,
-  		is_bold:       Module.wrapPointer(ptr,         Module.BoolPtr).getValue(),
-		is_italic:     Module.wrapPointer(ptr + 4,     Module.BoolPtr).getValue(),
-		is_underlined: Module.wrapPointer(ptr + 4 * 2, Module.BoolPtr).getValue(),
-		is_monospace:  Module.wrapPointer(ptr + 4 * 3, Module.BoolPtr).getValue(),
-		is_serif:      Module.wrapPointer(ptr + 4 * 4, Module.BoolPtr).getValue(),
-		is_smallcaps:  Module.wrapPointer(ptr + 4 * 5, Module.BoolPtr).getValue(),
-		pointsize:     Module.wrapPointer(ptr + 4 * 6, Module.IntPtr).getValue(),
-		font_id:       Module.wrapPointer(ptr + 4 * 7, Module.IntPtr).getValue(),
-	};
-	Module._free(ptr)
-	return obj;
-}
-
-function getFontInfo__old(ri){
-	var ptr = Module._malloc(4*8);
-	var fontName = ri.WordFontAttributes(
-		Module.wrapPointer(ptr,         Module.BoolPtr),
-		Module.wrapPointer(ptr + 4,     Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 2, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 3, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 4, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 5, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 6, Module.BoolPtr),
-		Module.wrapPointer(ptr + 4 * 7, Module.IntPtr),
-		Module.wrapPointer(ptr + 4 * 8, Module.IntPtr))
-  	var obj = {
-  		fontName: fontName,
-  		is_bold:       Module.getValue(ptr, 'i1'),
-		is_italic:     Module.getValue(ptr + 4, 'i1'),
-		is_underlined: Module.getValue(ptr + 4 * 2, 'i1'),
-		is_monospace:  Module.getValue(ptr + 4 * 3, 'i1'),
-		is_serif:      Module.getValue(ptr + 4 * 4, 'i1'),
-		is_smallcaps:  Module.getValue(ptr + 4 * 5, 'i1'),
-		pointsize:     Module.getValue(ptr + 4 * 6, 'i32'),
-		font_id:       Module.getValue(ptr + 4 * 7, 'i32')
-	};
-	Module._free(ptr)
-	return obj;
-}
-
 function getContours(){
 	var pixapt = Module.wrapPointer(Module._malloc(4), Module.PixaPtr)
 	var boxa = base.GetConnectedComponents(pixapt)
@@ -320,8 +236,12 @@ function getContours(){
 		// console.log('pix', pixxy.get_w(), pixxy.get_h(), pixxy.get_data());
 		drawBitPix(pixxy)
 	}
+	Module._pixaDestroy(Module.getPointer(pixa))
+	Module._boxaDestroy(Module.getPointer(boxa))
 }
 
+
+// this draws a bit depth 1 pix from leptonica's internal memory format
 
 function drawBitPix(pix){
 	var depth = pix.get_d(),

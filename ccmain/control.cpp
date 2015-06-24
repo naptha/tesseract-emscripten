@@ -41,6 +41,8 @@
 #include "globals.h"
 #include "sorthelper.h"
 #include "tesseractclass.h"
+#include <emscripten.h>
+
 
 // Include automatically generated configuration file if running autoconf.
 #ifdef HAVE_CONFIG_H
@@ -238,6 +240,11 @@ bool Tesseract::RecogAllWordsPassN(int pass_n, ETEXT_DESC* monitor,
         return false;
       }
     }
+    
+    EM_ASM_ARGS({
+      if(Module['TesseractProgress']) Module['TesseractProgress']($0);
+    }, pass_n == 1 ? (30 + 50 * w / words->size()) : (80 + 10 * w / words->size()));
+
     if (word->word->tess_failed) {
       int s;
       for (s = 0; s < word->lang_words.size() &&
@@ -437,6 +444,9 @@ bool Tesseract::recog_all_words(PAGE_RES* page_res,
   if (monitor != NULL) {
     monitor->progress = 100;
   }
+  EM_ASM_ARGS({
+      if(Module['TesseractProgress']) Module['TesseractProgress']($0);
+  }, 100);
   return true;
 }
 
@@ -604,6 +614,9 @@ void Tesseract::rejection_passes(PAGE_RES* page_res,
       monitor->ocr_alive = TRUE;
       monitor->progress = 95 + 5 * word_index / stats_.word_count;
     }
+    EM_ASM_ARGS({
+      if(Module['TesseractProgress']) Module['TesseractProgress']($0);
+    }, 95 + 5 * word_index / stats_.word_count);
     if (word->rebuild_word == NULL) {
       // Word was not processed by tesseract.
       page_res_it.forward();
