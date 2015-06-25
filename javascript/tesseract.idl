@@ -1,6 +1,5 @@
-
 interface TessBaseAPI {
-    void TessBaseAPI();
+  void TessBaseAPI();
 
   /**
    * Returns the version identifier as a static string. Do not delete.
@@ -285,12 +284,12 @@ interface TessBaseAPI {
    * If paraids is not NULL, the paragraph-id of each line within its block is
    * also returned as an array of one element per line. delete [] after use.
    */
-  // Boxa GetTextlines([Const] boolean raw_image, [Const] long raw_padding,
-  //                    Pixa** pixa, long** blockids, long** paraids);
+  Boxa GetTextlines([Const] boolean raw_image, [Const] long raw_padding,
+                     PixaPtr pixa, LongStarPtr blockids, LongStarPtr paraids);
   /*
      Helper method to extract from the thresholded image. (most common usage)
   */
-  // Boxa GetTextlines(Pixa** pixa, long** blockids);
+  Boxa GetTextlines(PixaPtr pixa, LongStarPtr blockids);
 
   /**
    * Get textlines and strips of image regions as a leptonica-style Boxa, Pixa
@@ -300,7 +299,7 @@ interface TessBaseAPI {
    * If blockids is not NULL, the block-id of each line is also returned as an
    * array of one element per line. delete [] after use.
    */
-  // Boxa GetStrips(Pixa** pixa, long** blockids);
+  Boxa GetStrips(PixaPtr pixa, LongStarPtr blockids);
 
   /**
    * Get the words as a leptonica-style
@@ -332,14 +331,16 @@ interface TessBaseAPI {
    * instead of the thresholded image and padded with raw_padding.
    * If text_only is true, then only text components are returned.
    */
-  // Boxa GetComponentImages(const PageIteratorLevel level,
-  //                          const boolean text_only, const boolean raw_image,
-  //                          const long raw_padding,
-  //                          Pixa** pixa, long** blockids, long** paraids);
+
+  Boxa GetComponentImages([Const] PageIteratorLevel level,
+                           [Const] boolean text_only, [Const] boolean raw_image,
+                           [Const] long raw_padding,
+                           PixaPtr pixa, LongStarPtr blockids, LongStarPtr paraids);
+
   // Helper function to get binary images with no padding (most common usage).
-  // Boxa GetComponentImages(const PageIteratorLevel level,
-  //                          const boolean text_only,
-  //                          Pixa** pixa, long** blockids);
+  Boxa GetComponentImages([Const] PageIteratorLevel level,
+                           [Const] boolean text_only,
+                           PixaPtr pixa, LongStarPtr blockids);
 
   /**
    * Returns the scale factor of the thresholded image that would be returned by
@@ -413,8 +414,10 @@ interface TessBaseAPI {
    *
    * Returns true if successful, false on error.
    */
+  
   // boolean ProcessPages([Const] DOMString filename, [Const] DOMString retry_config,
-  //                   long timeout_millisec, TessResultRenderer* renderer);
+  //                   long timeout_millisec, TessResultRenderer renderer);
+
   // Does the real work of ProcessPages.
   // boolean ProcessPagesInternal([Const] DOMString filename, [Const] DOMString retry_config,
   //                           long timeout_millisec, TessResultRenderer* renderer);
@@ -428,9 +431,10 @@ interface TessBaseAPI {
    *
    * See ProcessPages for desciptions of other parameters.
    */
-  // boolean ProcessPage(Pix pix, long page_index, [Const] DOMString filename,
-  //                  [Const] DOMString retry_config, long timeout_millisec,
-  //                  TessResultRenderer* renderer);
+
+  boolean ProcessPage(Pix pix, long page_index, [Const] DOMString filename,
+                   [Const] DOMString retry_config, long timeout_millisec,
+                   TessResultRenderer renderer);
 
   /**
    * Get a reading-order iterator to the results of LayoutAnalysis and/or
@@ -450,7 +454,7 @@ interface TessBaseAPI {
    * has not been subjected to a call of Init, SetImage, Recognize, Clear, End
    * DetectOS, or anything else that changes the internal PAGE_RES.
    */
-  MutableIterator GetMutableIterator();
+  // MutableIterator GetMutableIterator();
 
   /**
    * The recognized text is returned as a char* which is coded
@@ -849,16 +853,6 @@ interface PageIterator {
 
 };
 
-interface ParagraphJustification {
-};
-
-enum ParagraphJustification_ { 
-  "JUSTIFICATION_UNKNOWN", 
-  "JUSTIFICATION_LEFT", 
-  "JUSTIFICATION_CENTER", 
-  "JUSTIFICATION_RIGHT" 
-};
-
 interface ResultIterator {
   void ResultIterator([Const, Ref] ResultIterator resit);
 
@@ -1193,10 +1187,16 @@ interface ResultIterator {
   // If iterating at a higher level object than symbols, eg words, then
   // this will return the attributes of the first symbol in that word.
   boolean SymbolIsDropcap();
-
-
-
 };
+
+
+interface WordChoiceIterator {
+  void WordChoiceIterator([Const, Ref] ResultIterator result_it);
+  boolean Next();
+  [Const] DOMString GetUTF8Text();
+  float Confidence();
+};
+
 
 interface ChoiceIterator {
   void ChoiceIterator([Const, Ref] ResultIterator result_it);
@@ -1205,9 +1205,8 @@ interface ChoiceIterator {
   float Confidence();
 };
 
-interface MutableIterator {
 
-};
+// interface MutableIterator {};
 
 interface Pix {
     readonly attribute long w;           // width in pixels                 
@@ -1254,6 +1253,7 @@ interface OSBestResult {
 
 
 // interface GenericVector {
+//   void GenericVector();
 //   long size();
 //   long size_reserved();
 //   long length();
@@ -1269,9 +1269,12 @@ interface Pta {
   readonly attribute FloatPtr y; 
 };
 
+interface TessResultRenderer {};
+
 interface Dawg {};
 
 interface IntPtr {};
+interface LongStarPtr {};
 interface DoublePtr {};
 interface FloatPtr {};
 interface BoolPtr {};
@@ -1421,6 +1424,17 @@ enum TextlineOrder_ {
   "TEXTLINE_ORDER_LEFT_TO_RIGHT",
   "TEXTLINE_ORDER_RIGHT_TO_LEFT",
   "TEXTLINE_ORDER_TOP_TO_BOTTOM",
+};
+
+
+interface ParagraphJustification {
+};
+
+enum ParagraphJustification_ { 
+  "JUSTIFICATION_UNKNOWN", 
+  "JUSTIFICATION_LEFT", 
+  "JUSTIFICATION_CENTER", 
+  "JUSTIFICATION_RIGHT" 
 };
 
 
