@@ -130,7 +130,7 @@ int OSResults::get_best_script(int orientation_id) const {
 // Print the script scores for all possible orientations.
 void OSResults::print_scores(void) const {
   for (int i = 0; i < 4; ++i) {
-    tprintf("Orientation id #%d", i);
+    tprintf("Orientation id #%d\n", i);
     print_scores(i);
   }
 }
@@ -285,8 +285,8 @@ int os_detect_blobs(const GenericVector<int>* allowed_scripts,
   BLOBNBOX_C_IT filtered_it(blob_list);
   int real_max = MIN(filtered_it.length(), kMaxCharactersToTry);
   // tprintf("Total blobs found = %d\n", blobs_total);
-  // tprintf("Number of blobs post-filtering = %d\n", filtered_it.length());
-  // tprintf("Number of blobs to try = %d\n", real_max);
+  tprintf("Number of blobs post-filtering = %d\n", filtered_it.length());
+  tprintf("Number of blobs to try = %d\n", real_max);
 
   // If there are too few characters, skip this page entirely.
   if (real_max < kMinCharactersToTry / 2) {

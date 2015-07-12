@@ -12,6 +12,9 @@ namespace tesseract {
 	typedef float FloatPtr;
 	typedef bool BoolPtr;
 
+
+	typedef int* LongStarPtr;
+
 	typedef Orientation Orientation_;
 	typedef WritingDirection WritingDirection_;
 	typedef TextlineOrder TextlineOrder_;
@@ -20,6 +23,7 @@ namespace tesseract {
 	typedef Pixa* PixaPtr;
 	typedef Pix* PixPtr;
 	typedef Box* BoxPtr;
+
 
 	#include "glue.cpp"
 }
