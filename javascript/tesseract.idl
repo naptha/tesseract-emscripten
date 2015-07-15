@@ -432,9 +432,9 @@ interface TessBaseAPI {
    * See ProcessPages for desciptions of other parameters.
    */
 
-  boolean ProcessPage(Pix pix, long page_index, [Const] DOMString filename,
-                   [Const] DOMString retry_config, long timeout_millisec,
-                   TessResultRenderer renderer);
+  // boolean ProcessPage(Pix pix, long page_index, [Const] DOMString filename,
+  //                  [Const] DOMString retry_config, long timeout_millisec,
+  //                  TessResultRenderer renderer);
 
   /**
    * Get a reading-order iterator to the results of LayoutAnalysis and/or
@@ -1268,7 +1268,7 @@ interface Pta {
   readonly attribute FloatPtr y; 
 };
 
-interface TessResultRenderer {};
+// interface TessResultRenderer {};
 
 interface Dawg {};
 

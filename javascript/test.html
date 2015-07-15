@@ -1,7 +1,7 @@
 <script src="madeline.js"></script>
 <canvas id="c"></canvas>
 <script>
-var Module = Tesseract304({
+var Module = TesseractCore({
     TOTAL_MEMORY: 90e6,
     TesseractProgress: function(percent){
         console.log(percent)
@@ -53,6 +53,7 @@ function loadLanguage(path, cb){ // NodeJS style callback
     xhr.onload = function(){
         if (xhr.status == 200 || (xhr.status == 0 && xhr.response)) {
             var arr = new Uint8Array(xhr.response)
+            console.log(path.replace(/^.*\//, ''))
             Module.FS_createDataFile('tessdata', path.replace(/^.*\//, ''), arr, true, false);
             cb(null, xhr.response)
         } else cb(xhr, null);
