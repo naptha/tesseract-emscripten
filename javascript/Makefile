@@ -7,7 +7,7 @@ lepton:
 	emmake make
 
 node: glue
-	emcc -O2 \
+	emcc -Oz --closure 1 \
 		wrapper.cpp ../api/baseapi.cpp \
 		-o lengle.js \
 		--post-js glue.js --post-js anterior.js \
@@ -19,7 +19,9 @@ node: glue
 		-DGRAPHICS_DISABLED -DIMGUNPK_H -DSECURE_NAMES -DTESSDATA_PREFIX="./" -DUSE_STD_NAMESPACE  \
 		--memory-init-file 0 -s TOTAL_MEMORY=268435456 \
 		-s EXPORT_NAME='"TesseractCore"'  -s MODULARIZE=1 -s NO_BROWSER=1 \
-		-s EXPORTED_FUNCTIONS='["_pixDestroy","_boxaDestroy","_pixaDestroy","_ptaDestroy"]' 
+		-s EXPORTED_FUNCTIONS='["_pixDestroy","_boxaDestroy","_pixaDestroy","_ptaDestroy"]' \
+		--js-transform "python strip_node.py" \
+		--llvm-lto 1 -s INVOKE_RUN=0 -s NO_EXIT_RUNTIME=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 
 
 dev: glue
 	emcc -Oz --closure 1 \
@@ -38,5 +40,5 @@ dev: glue
 		--llvm-lto 1 -s INVOKE_RUN=0 -s NO_EXIT_RUNTIME=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 
 
 module:
-	cp madeline.js tesseract.js-core/index.js
+	cp lengle.js tesseract.js-core/index.js
 	echo "module.exports = TesseractCore;" >> tesseract.js-core/index.js
